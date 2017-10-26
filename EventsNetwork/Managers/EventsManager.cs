@@ -48,7 +48,6 @@ namespace EventsNetwork
 
         private String GetMetupEventsURL()
         {
-            //url = "https://api.meetup.com/find/events?sig_id=89850152&sig=1a1bb0e2c7beca8a5044dd07b3db58e1f0084783";
             return Constants.MeetupDataSource.BaseUrl + Constants.MeetupDataSource.EventsUri + "?" + Constants.MeetupDataSource.IdName + "=" + Constants.MeetupDataSource.Id + "&" + Constants.MeetupDataSource.KeyName + "=" + Constants.MeetupDataSource.Key;
         }
 
@@ -82,7 +81,6 @@ namespace EventsNetwork
 
         private String GetTicketmasterEventsURL()
         {
-            //url = "https://app.ticketmaster.com/discovery/v2/events.json?city=Málaga&apikey=MFAKsdfb5xVlWlkK3HsmnJCtGB9mluiv";
             return Constants.TicketmasterDataSource.BaseUrl + Constants.TicketmasterDataSource.EventsUri + "?" + Constants.TicketmasterDataSource.IdName + "=" + Constants.TicketmasterDataSource.Id + "&" + Constants.TicketmasterDataSource.KeyName + "=" + Constants.TicketmasterDataSource.Key;
         }
 
@@ -100,9 +98,7 @@ namespace EventsNetwork
         }
 
         private String CreateEstacionamientosCkanURL()
-        {
-            //var url = "https://demo.ckan.org/api/3/action/datastore_search?resource_id=b4be2269-b917-49ce-8b8b-01f0395da9c3";
-            //client.DefaultRequestHeaders.Add("Authorization", "8b9db36e-0dc9-4797-ae8e-f9a946a760e6");
+        {            
             return Constants.EstacionamientosCkanDataSource.BaseUrl + Constants.EstacionamientosCkanDataSource.SearchUri + "?" + Constants.EstacionamientosCkanDataSource.ResIdName + "=" + Constants.EstacionamientosCkanDataSource.ResId;
         }
     }
