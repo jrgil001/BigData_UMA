@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Product App</title>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.4.min.js"></script>
+
+    <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+    <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        #map {
+            height: 70%;
+            width: 70%;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h2>Málaga Events Network</h2>
+        <h4>José Ramón Gil Cotaina</h4>
+    </div>
+    <div>
+        <h2>Elige tu acción:</h2>
+        <div class="buttons">
+            <button class="showEvents">Mostrar eventos en Málaga</button>
+            <button class="myButton">Filtrar estacionamiento bici</button>
+            <button class="reset">Reset</button>
+        </div>
+        </br>
+    </div>
+    <div id="map"></div>
+
+    <script>
+        var baselayer;
+        var map;
+        function main() {
+            map = new L.Map('map', {
+                zoomControl: true,
+                center: [36.7179625, -4.4236002],
+                zoom: 13
+            });
+
+            var basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+            }).addTo(map);
+
+            cartodb.createLayer(map, {
+                user_name: 'jrgil001',
+                type: 'cartodb',
+                sublayers: [
+                    {
+                        sql: 'SELECT * FROM estacionamientos_1',
+                        cartocss: "#layer { marker-width: 7; marker-fill: #EE4D5A; marker-fill-opacity: 0.9; marker-line-color: #FFFFFF; marker-line-width: 1; marker-line-opacity: 1; marker-placement: point; marker-type: ellipse; marker-allow-overlap: true; }"
+                    }
+                ]
+            }).addTo(map).done(function (layer) {
+                baselayer = layer.getSubLayer(0);
+            });
+
+
+        }
+        $(window).load(main);
+
+
+        $('.showEvents').click(function () {
+            var uri = 'api/events';
+            $.getJSON(uri)
+                .done(function (data) {
+                    setEvents(data);
+                }).fail(function (jqXHR, textStatus, err) {
+                    $('#product').text('Error: ' + err);
+                });
+        });
+
+        $('.myButton').click(function () {
+            var query = 'SELECT * FROM estacionamientos_1 WHERE id = 8';
+            baselayer.setSQL(query);
+        });
+
+        $('.reset').click(function () {
+            var query = 'SELECT * FROM estacionamientos_1';
+            baselayer.setSQL(query);
+        });
+
+        function setEvents(events) {
+            for (var i = 0; i < events.length; i++) {
+                setEvent(events[i]);
+            }
+        }
+
+        function setEvent(event) {
+            if (isMeetupType(event)) {
+                createMeetupMarker(event);
+            }
+            if (isTicketmasterType(event)) {
+                createTicketmasterMarker(event);
+            }
+        }
+
+        function isMeetupType(event) {
+            if (event.dsType != null && event.dsType === 'Meetup') {
+                return true;
+            }
+            return false;
+        }
+
+        function createMeetupMarker(event) {
+            var venue = event.venue;
+            if (venue != null) {
+                var pos = L.latLng({
+                    lon: venue.lon,
+                    lat: venue.lat
+                });
+                var marker = createMarker(event.name, event.link, pos);
+                //marker._icon.src = "https://cdn4.iconfinder.com/data/icons/small-n-flat/24/map-marker-64.png";
+                marker._icon.src = "https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678082-tag-64.png";
+            }
+        }
+
+        function isTicketmasterType(event) {
+            if (event.dsType != null && event.dsType === 'Ticketmaster') {
+                return true;
+            }
+            return false;
+        }
+
+        function createTicketmasterMarker(event) {
+            var venue = event._embedded.venues[0].location;
+            if (venue != null) {
+                var pos = L.latLng({
+                    lon: venue.longitude,
+                    lat: venue.latitude
+                });
+
+                var marker = createMarker(event.name, event.url, pos);
+                marker._icon.src = "https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678103-headphone-64.png";
+            }
+        }
+
+        function createMarker(name, url, pos) {
+            var popup = createPopup(name, url);
+            var marker = L.marker(pos).addTo(map).bindPopup(popup);
+            return marker;
+        }
+
+        function createPopup(name, url) {
+            var link = "<a href=" + url + ">" + url + "</a>";
+            var popup = "<b>" + name + "</b> <br/>" + link + " <br/>";
+            return popup;
+        }
+    </script>
+</body>
+</html>
