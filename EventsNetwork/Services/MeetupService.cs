@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventsNetwork
 {
-    internal class MeetupService : BaseService
+    internal class MeetupService : BaseService, IMeetupService
     {
         public override async Task<IList<JObject>> GetEvents()
         {

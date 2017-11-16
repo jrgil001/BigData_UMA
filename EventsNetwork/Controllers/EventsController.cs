@@ -18,6 +18,10 @@ namespace EventsNetwork
 
         public async Task<IList<JObject>> GetAllEvents()
         {
+            DataController dc = new DataController();
+            //await dc.GenerateData();
+            await dc.GenerateDataCase2();
+
             return await eventsManager.GetAllEvents();
         }
     }

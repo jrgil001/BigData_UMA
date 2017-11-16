@@ -7,8 +7,8 @@ namespace EventsNetwork
 {
     internal class EventsManager : IEventsManager
     {
-        private MeetupService _meetupService;
-        private TicketmasterService _ticketmasterService;
+        private IMeetupService _meetupService;
+        private ITicketmasterService _ticketmasterService;
 
         public EventsManager()
         {

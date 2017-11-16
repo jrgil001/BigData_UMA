@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventsNetwork
 {
-    internal class TicketmasterService : BaseService
+    internal class TicketmasterService : BaseService, ITicketmasterService
     {
         public override async Task<IList<JObject>> GetEvents()
         {
